@@ -1,8 +1,9 @@
-name: DGMS Scraper Bot
+name: DGMS Circular Scraper Bot
 
 on:
   schedule:
-    - cron: '0 */6 * * *'
+  # Har 1 ghante mein chalega
+    - cron: '0 * * * *'
   workflow_dispatch: 
 
 concurrency:
@@ -29,22 +30,22 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install requests beautifulsoup4
+        # Ab aapki requirements.txt file use hogi
+        pip install -r requirements.txt
 
-    - name: Run All Scrapers
+    - name: Run Scraper
       run: |
         python scraper.py
-        python circular_scraper.py
 
     - name: Commit and Push if changed
       run: |
-        # Dono files ko stage karo
-        git add notification.json circular.json
+        # Sirf circular.json ko stage karega
+        git add circular.json
         
-        # Agar dono mein se kisi mein bhi changes hain, toh commit karega
+        # Agar changes hain, tabhi commit karega
         if ! git diff --staged --quiet; then
           git config --local user.name "github-actions[bot]"
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git commit -m "Auto-update DGMS Notifications & Circulars"
+          git commit -m "Auto-update DGMS Circulars"
           git push origin HEAD
         fi
