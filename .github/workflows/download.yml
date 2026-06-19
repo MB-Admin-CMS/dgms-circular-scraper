@@ -1,0 +1,38 @@
+name: Download PDFs
+
+on:
+  workflow_dispatch:
+
+jobs:
+  download:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Download PDFs
+        run: python download_pdfs.py
+
+      - name: Commit downloaded PDFs
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add pdfs/
+
+          git diff --cached --quiet || (
+            git commit -m "Add downloaded PDFs"
+            git push
+          )
